@@ -16,7 +16,62 @@ async function main() {
     });
   }
 
+  let onlineTicket = await prisma.ticketType.findFirst({
+    where: {
+      isRemote: true,
+      includesHotel: false
+    }
+  });
+
+  if (!onlineTicket) {
+    onlineTicket = await prisma.ticketType.create({
+      data: {
+        name: 'online ticket',
+        price: 100,
+        isRemote: true,
+        includesHotel: false
+      }
+    })
+  };
+
+  let regularTicketHotelTrue = await prisma.ticketType.findFirst({
+    where: {
+      isRemote: false,
+      includesHotel: true
+    }
+  });
+
+  if (!regularTicketHotelTrue) {
+    await prisma.ticketType.create({
+      data: {
+        name: 'regular ticket with hotel',
+        price: 600,
+        isRemote: false,
+        includesHotel: true
+      }
+    })
+  };
+
+  let regularTicketHotelFalse = await prisma.ticketType.findFirst({
+    where: {
+      isRemote: false,
+      includesHotel: false
+    }
+  });
+
+  if (!regularTicketHotelFalse) {
+    await prisma.ticketType.create({
+      data: {
+        name: 'regular ticket without hotel',
+        price: 250,
+        isRemote: false,
+        includesHotel: false
+      }
+    })
+
+};
   console.log({ event });
+  
 }
 
 main()
@@ -27,3 +82,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
