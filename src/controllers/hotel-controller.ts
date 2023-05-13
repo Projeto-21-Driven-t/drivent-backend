@@ -21,7 +21,20 @@ export async function getHotelsWithRooms(req: AuthenticatedRequest, res: Respons
   try {
     const hotels = await hotelsService.getHotelsWithRooms(userId, Number(hotelId));
 
-    return res.status(httpStatus.OK).send(hotels);
+    const roomsWithBookingCount = hotels.Rooms.map((room) => {
+      return {
+        ...room,
+        bookingCount: room.Booking.length,
+        Booking: undefined,
+      };
+    });
+
+    const hotelsResponse = {
+      ...hotels,
+      Rooms: roomsWithBookingCount,
+    };
+
+    return res.status(httpStatus.OK).send(hotelsResponse);
   } catch (error) {
     next(error);
   }
