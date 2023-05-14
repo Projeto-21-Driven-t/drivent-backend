@@ -38,7 +38,25 @@ export function handleApplicationErrors(
     });
   }
 
+  if (err.name === 'cannotFindEnrollmenteError') {
+    return res.status(httpStatus.NOT_FOUND).send({
+      message: err.message,
+    });
+  }
+
   if (err.name === 'CannotListHotelsError') {
+    return res.status(httpStatus.NOT_FOUND).send({
+      message: err.message,
+    });
+  }
+
+  if (err.name === 'notHotelIncludesError') {
+    return res.status(httpStatus.NOT_FOUND).send({
+      message: err.message,
+    });
+  }
+
+  if (err.name === 'notPaidYetError') {
     return res.status(httpStatus.NOT_FOUND).send({
       message: err.message,
     });
