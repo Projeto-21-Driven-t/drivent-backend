@@ -76,12 +76,15 @@ async function main() {
   };
 
   let hotels = await prisma.hotel.findMany();
-  if(!hotels || hotels.length === 0) {
+  if (!hotels || hotels.length === 0) {
     hotels = await registeredHotels.insertHotels();
   }
 
-  // let rooms = await registeredRooms.rooms(hotels)
-  // console.log(rooms)
+  let hotelsRooms = await prisma.room.findMany();
+  if (!hotelsRooms || hotelsRooms.length === 0) {
+    await registeredRooms.rooms(hotels)
+  }
+
 
   console.log({ event });
 
