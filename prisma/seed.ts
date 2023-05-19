@@ -97,7 +97,7 @@ async function main() {
       data: {
         name: '101',
         capacity: 3,
-        hotelId: 280
+        hotelId: 21
       }
     })
 
@@ -114,7 +114,7 @@ async function main() {
       data: {
         name: '102',
         capacity: 4,
-        hotelId: 280
+        hotelId: 21
       }
     })
 
