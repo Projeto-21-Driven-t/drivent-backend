@@ -41,15 +41,12 @@ async function bookingRoomById(userId: number, roomId: number) {
   return bookingRepository.create({ roomId, userId });
 }
 
-async function checkBookingByUserId(userId: number, roomId: number) {
-  if (!roomId) throw badRequestError();
+async function checkBookingByUserId(userId: number) {
+  const data = await bookingRepository.findByUserIdWhithHotel(userId);
 
-  await checkValidBooking(roomId);
-  const booking = await bookingRepository.findByUserIdWhithHotel(userId);
+  if (!data) throw cannotBookingError();
 
-  if (!booking || booking.userId !== userId) throw cannotBookingError();
-
-  return booking;
+  return data;
 }
 
 async function changeBookingRoomById(userId: number, roomId: number) {

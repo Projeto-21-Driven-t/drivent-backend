@@ -35,13 +35,10 @@ export async function bookingRoom(req: AuthenticatedRequest, res: Response, next
 export async function bookingcheck(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     const { userId } = req;
-    const { roomId } = req.body as Record<string, number>;
 
-    const booking = await bookingService.checkBookingByUserId(userId, roomId);
+    const booking = await bookingService.checkBookingByUserId(userId);
 
-    return res.status(httpStatus.OK).send({
-      bookingId: booking.id,
-    });
+    return res.status(httpStatus.OK).send(booking.Room);
   } catch (error) {
     next(error);
   }
