@@ -46,10 +46,12 @@ async function findByUserIdWhithHotel(userId: number) {
           id: true,
           name: true,
           capacity: true,
-          hotelId: true,
-        },
-        include: {
           Hotel: true,
+          Booking: {
+            select: {
+              id: true,
+            },
+          },
         },
       },
     },
