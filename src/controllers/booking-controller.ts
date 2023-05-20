@@ -32,6 +32,21 @@ export async function bookingRoom(req: AuthenticatedRequest, res: Response, next
   }
 }
 
+export async function bookingcheck(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  try {
+    const { userId } = req;
+    const { roomId } = req.body as Record<string, number>;
+
+    const booking = await bookingService.checkBookingByUserId(userId, roomId);
+
+    return res.status(httpStatus.OK).send({
+      bookingId: booking.id,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function changeBooking(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const { userId } = req;
   const bookingId = Number(req.params.bookingId);
