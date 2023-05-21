@@ -34,11 +34,11 @@ async function getBooking(userId: number) {
 
 async function bookingRoomById(userId: number, roomId: number) {
   if (!roomId) throw badRequestError();
-
+  const userBooking = await bookingRepository.findByUserId(userId);
   await checkEnrollmentTicket(userId);
   await checkValidBooking(roomId);
 
-  return bookingRepository.create({ roomId, userId });
+  return bookingRepository.upsertBooking({ id: userBooking?.id, roomId, userId });
 }
 
 async function checkBookingByUserId(userId: number) {
@@ -49,25 +49,9 @@ async function checkBookingByUserId(userId: number) {
   return data;
 }
 
-async function changeBookingRoomById(userId: number, roomId: number) {
-  if (!roomId) throw badRequestError();
-
-  await checkValidBooking(roomId);
-  const booking = await bookingRepository.findByUserId(userId);
-
-  if (!booking || booking.userId !== userId) throw cannotBookingError();
-
-  return bookingRepository.upsertBooking({
-    id: booking.id,
-    roomId,
-    userId,
-  });
-}
-
 const bookingService = {
   bookingRoomById,
   getBooking,
-  changeBookingRoomById,
   checkEnrollmentTicket,
   checkValidBooking,
   checkBookingByUserId,
