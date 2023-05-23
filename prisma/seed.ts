@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 
 import registeredHotels from "./hotels";
 import registeredRooms from "./hotelRooms";
+import registeredActivities from "./activities";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -85,7 +86,11 @@ async function main() {
     await registeredRooms.rooms(hotels)
   }
 
-
+  let activities = await prisma.activity.findMany();
+  if(!activities || activities.length === 0) {
+    await registeredActivities.insertActivities();
+  }
+  
   console.log({ event });
 
 }
