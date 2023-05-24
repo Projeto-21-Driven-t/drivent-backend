@@ -15,7 +15,7 @@ async function insertActivities() {
             },
             {
                 day: 'Sexta',
-                date: '23/05',
+                date: '25/05',
                 place: 'Auditório Lateral',
                 name: 'CSS Básico',
                 startsAt: '09:00',
@@ -33,7 +33,7 @@ async function insertActivities() {
             },
             {
                 day: 'Sexta',
-                date: '23/05',
+                date: '24/05',
                 place: 'Sala de Workshop',
                 name: 'Palestra: buscando calma',
                 startsAt: '10:00',
