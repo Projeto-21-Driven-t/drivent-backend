@@ -24,9 +24,7 @@ export async function bookingRoom(req: AuthenticatedRequest, res: Response, next
 
     const booking = await bookingService.bookingRoomById(userId, roomId);
 
-    return res.status(httpStatus.OK).send({
-      bookingId: booking.id,
-    });
+    return res.status(httpStatus.OK).send(booking);
   } catch (error) {
     next(error);
   }
@@ -35,30 +33,10 @@ export async function bookingRoom(req: AuthenticatedRequest, res: Response, next
 export async function bookingcheck(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     const { userId } = req;
-    const { roomId } = req.body as Record<string, number>;
 
-    const booking = await bookingService.checkBookingByUserId(userId, roomId);
+    const booking = await bookingService.checkBookingByUserId(userId);
 
-    return res.status(httpStatus.OK).send({
-      bookingId: booking.id,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function changeBooking(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const { userId } = req;
-  const bookingId = Number(req.params.bookingId);
-  if (!bookingId) return res.sendStatus(httpStatus.BAD_REQUEST);
-
-  try {
-    const { roomId } = req.body as Record<string, number>; // <tipo da chave, tipo do valor>
-    const booking = await bookingService.changeBookingRoomById(userId, roomId);
-
-    return res.status(httpStatus.OK).send({
-      bookingId: booking.id,
-    });
+    return res.status(httpStatus.OK).send(booking.Room);
   } catch (error) {
     next(error);
   }

@@ -4,15 +4,6 @@ import { prisma } from '@/config';
 type CreateParams = Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>;
 type UpdateParams = Omit<Booking, 'createdAt' | 'updatedAt'>;
 
-async function create({ roomId, userId }: CreateParams): Promise<Booking> {
-  return prisma.booking.create({
-    data: {
-      roomId,
-      userId,
-    },
-  });
-}
-
 async function findByRoomId(roomId: number) {
   return prisma.booking.findMany({
     where: {
@@ -46,10 +37,12 @@ async function findByUserIdWhithHotel(userId: number) {
           id: true,
           name: true,
           capacity: true,
-          hotelId: true,
-        },
-        include: {
           Hotel: true,
+          Booking: {
+            select: {
+              id: true,
+            },
+          },
         },
       },
     },
@@ -57,6 +50,7 @@ async function findByUserIdWhithHotel(userId: number) {
 }
 
 async function upsertBooking({ id, roomId, userId }: UpdateParams) {
+  if (!id) id = 0;
   return prisma.booking.upsert({
     where: {
       id,
@@ -68,11 +62,25 @@ async function upsertBooking({ id, roomId, userId }: UpdateParams) {
     update: {
       roomId,
     },
+    include: {
+      Room: {
+        select: {
+          id: true,
+          name: true,
+          capacity: true,
+          Hotel: true,
+          Booking: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
 const bookingRepository = {
-  create,
   findByRoomId,
   findByUserId,
   upsertBooking,

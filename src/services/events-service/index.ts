@@ -14,13 +14,14 @@ export type GetFirstEventResult = Omit<Event, 'createdAt' | 'updatedAt'>;
 
 async function isCurrentEventActive(): Promise<boolean> {
   const event = await eventRepository.findFirst();
+
   if (!event) return false;
 
   const now = dayjs();
   const eventStartsAt = dayjs(event.startsAt);
   const eventEndsAt = dayjs(event.endsAt);
 
-  return now.isAfter(eventStartsAt) && now.isBefore(eventEndsAt);
+  return now.isAfter(eventStartsAt) /* && now.isBefore(eventEndsAt) */;
 }
 
 const eventsService = {
