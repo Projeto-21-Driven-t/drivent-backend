@@ -62,6 +62,12 @@ export function handleApplicationErrors(
     });
   }
 
+  if (err.name === 'isRemoteTycketError') {
+    return res.status(httpStatus.FORBIDDEN).send({
+      message: err.message,
+    });
+  }
+
   if (err.name === 'BadRequestError') {
     return res.status(httpStatus.BAD_REQUEST).send({
       message: err.message,
