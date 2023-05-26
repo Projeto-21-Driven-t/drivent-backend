@@ -2,11 +2,29 @@ import { Activity } from '@prisma/client';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import activitiesRepository from '@/repositories/activities-repository';
+import ticketsRepository from '@/repositories/tickets-repository';
+import enrollmentRepository from '@/repositories/enrollment-repository';
+import { cannotFindEnrollmenteError } from '@/errors/cannot-find-enrollment-error';
+import { notPaidYetError } from '@/errors/not-paid-yet-error';
 import { notFoundError } from '@/errors';
+import { isRemoteTycketError } from '@/errors/is-remote-ticket-error';
 
 dayjs.extend(customParseFormat);
 
-async function getActivities() {
+async function getActivities(userId: number) {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) {
+    throw cannotFindEnrollmenteError();
+  }
+  const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
+
+  if (!ticket || ticket.status === 'RESERVED') {
+    throw notPaidYetError();
+  }
+  if (ticket.TicketType.isRemote) {
+    throw isRemoteTycketError();
+  }
+
   const activities = await activitiesRepository.findManyActivies();
   const formatedActivities: formatedActivitiesType = {
     principal: [],
