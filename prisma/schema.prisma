@@ -138,12 +138,10 @@ model Teste {
 
 model Activity {
   id        Int      @id @default(autoincrement())
-  day       String   @db.VarChar(15)
-  date      String   @db.VarChar(10)
   place     String   @db.VarChar(50)
   name      String   @db.VarChar(100)
-  startsAt  String   @db.VarChar(15)
-  endsAt    String   @db.VarChar(15)
+  startsAt  String   @db.VarChar(20)
+  endsAt    String   @db.VarChar(20)
   capacity  Int
   createdAt DateTime @default(now())
 }

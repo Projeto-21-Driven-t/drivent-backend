@@ -1,20 +1,17 @@
 import { prisma } from '@/config';
 
-function findManyActivies() {
+function findManyActivities() {
   return prisma.activity.findMany({
     orderBy: [
       {
-        place: 'asc',
-      },
-      {
-        date: 'asc',
+        startsAt: 'asc',
       },
     ],
   });
 }
 
 const activitiesRepository = {
-  findManyActivies,
+  findManyActivities,
 };
 
 export default activitiesRepository;
