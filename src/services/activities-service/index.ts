@@ -7,11 +7,11 @@ import enrollmentRepository from '@/repositories/enrollment-repository';
 import { cannotFindEnrollmenteError } from '@/errors/cannot-find-enrollment-error';
 import { notPaidYetError } from '@/errors/not-paid-yet-error';
 import { notFoundError } from '@/errors';
-import { isRemoteTycketError } from '@/errors/is-remote-ticket-error';
+import { isRemoteTicketError } from '@/errors/is-remote-ticket-error';
 
 dayjs.extend(customParseFormat);
 
-async function getActivities(userId: number) {
+async function getActivities(userId: number): Promise<Activity[]> {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
   if (!enrollment) {
     throw cannotFindEnrollmenteError();
@@ -22,24 +22,23 @@ async function getActivities(userId: number) {
     throw notPaidYetError();
   }
   if (ticket.TicketType.isRemote) {
-    throw isRemoteTycketError();
+    throw isRemoteTicketError();
   }
-
-  const activities = await activitiesRepository.findManyActivies();
-  const formatedActivities: formatedActivitiesType = {
-    principal: [],
-    lateral: [],
-    workshop: [],
-  };
-  for (let activity of activities) {
-    console.log(dayjs(activity.date, 'DD/MM').day());
-    activity = { ...activity };
-    if (activity.place.includes('Principal')) formatedActivities.principal.push(activity);
-    if (activity.place.includes('Lateral')) formatedActivities.lateral.push(activity);
-    if (activity.place.includes('Workshop')) formatedActivities.workshop.push(activity);
-  }
-  if (!activities) throw notFoundError();
-  return formatedActivities;
+  const activities = await activitiesRepository.findManyActivities();
+  // const formatedActivities: formatedActivitiesType = {
+  //   principal: [],
+  //   lateral: [],
+  //   workshop: [],
+  // };
+  // for (let activity of activities) {
+  //   console.log(dayjs(activity.date, 'DD/MM').day());
+  //   activity = { ...activity };
+  //   if (activity.place.includes('Principal')) formatedActivities.principal.push(activity);
+  //   if (activity.place.includes('Lateral')) formatedActivities.lateral.push(activity);
+  //   if (activity.place.includes('Workshop')) formatedActivities.workshop.push(activity);
+  // }
+  if (activities.length === 0) throw notFoundError();
+  return activities;
 }
 
 const activitiesService = { getActivities };

@@ -1,8 +1,8 @@
 import { ApplicationError } from '@/protocols';
 
-export function isRemoteTycketError(): ApplicationError {
+export function isRemoteTicketError(): ApplicationError {
   return {
-    name: 'isRemoteTycketError',
-    message: 'isRemoteTycketError',
+    name: 'isRemoteTicketError',
+    message: 'isRemoteTicketError',
   };
 }
