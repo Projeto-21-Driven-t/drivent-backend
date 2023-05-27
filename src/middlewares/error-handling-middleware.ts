@@ -62,7 +62,7 @@ export function handleApplicationErrors(
     });
   }
 
-  if (err.name === 'isRemoteTycketError') {
+  if (err.name === 'isRemoteTicketError') {
     return res.status(httpStatus.FORBIDDEN).send({
       message: err.message,
     });
