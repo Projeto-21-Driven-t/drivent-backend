@@ -41,10 +41,29 @@ describe('POST /activities', () => {
       const response = await server
         .post('/activities')
         .set('Authorization', `Bearer ${token}`)
-        .send({ activityId: activity.id });
+        .send({ activityId: activity.id, startsAt: '31/05/23 09:00'});
 
       expect(response.status).toBe(201);
     });
+
+    it('Should respond with status 409 when date conflict happens in scheduling', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createTicketTypeWithHotel();
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await createEvent();
+      const activity = await createActivity();
+      await scheduleActivity(user.id, activity.id, '30/05/23 09:00');
+
+      const response = await server
+      .post('/activities')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ activityId: activity.id, startsAt: '30/05/23 09:00'});
+
+      expect(response.status).toBe(409);
+    });
+
   });
 });
 
@@ -59,9 +78,9 @@ describe('DELETE /activities', () => {
     it('Should respond with status 200 if deleted successfully', async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
-      const event = await createEvent();
+      await createEvent();
       const activity = await createActivity();
-      const schedule = await scheduleActivity(user.id, activity.id);
+      await scheduleActivity(user.id, activity.id, '31/12/2023 10:00');
 
       const response = await server.delete(`/activities/${activity.id}`).set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(200);

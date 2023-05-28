@@ -1,4 +1,5 @@
 import { prisma } from '@/config';
+import { Prisma } from '@prisma/client';
 
 function findManyActivities() {
   return prisma.activity.findMany({
@@ -19,13 +20,22 @@ function getScheduleByIds(userId: number, activityId: number){
   });
 }
 
-async function createSchedule(userId: number, activityId: number) {
+function getSchedulesByUserId(userId: number){
+  return prisma.schedule.findMany({
+    where: {
+      userId,
+    }
+  });
+}
+
+async function createSchedule(userId: number, activityId: number, startsAt: string) {
   await prisma.schedule.create({
     data: {
       userId,
       activityId,
       updatedAt: new Date(),
-    },
+      startsAt,
+    } as Prisma.ScheduleUncheckedCreateInput,
   });
   await prisma.activity.update({
     where: {
@@ -54,7 +64,8 @@ const activitiesRepository = {
   findManyActivities,
   createSchedule, 
   deleteSchedule,
-  getScheduleByIds
+  getScheduleByIds,
+  getSchedulesByUserId,
 };
 
 export default activitiesRepository;

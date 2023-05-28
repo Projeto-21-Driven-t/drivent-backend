@@ -18,7 +18,8 @@ export async function scheduleActivity(req: AuthenticatedRequest, res: Response,
   try {
     const { userId } = req;
     const { activityId } = req.body;
-    await activitiesService.scheduleActivity(userId, activityId);
+    const { startsAt } = req.body;
+    await activitiesService.scheduleActivity(userId, activityId, startsAt);
     return res.sendStatus(httpStatus.CREATED);
   } catch (e) {
     console.log(e);
