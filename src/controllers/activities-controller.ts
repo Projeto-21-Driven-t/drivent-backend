@@ -10,7 +10,31 @@ export async function getActivities(req: AuthenticatedRequest, res: Response, ne
     res.status(httpStatus.OK).send(activities);
   } catch (e) {
     console.log(e);
+    next(e);
+  }
+}
 
+export async function scheduleActivity(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  try {
+    const { userId } = req;
+    const { activityId } = req.body;
+    const { startsAt } = req.body;
+    await activitiesService.scheduleActivity(userId, activityId, startsAt);
+    return res.sendStatus(httpStatus.CREATED);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+}
+
+export async function deleteSchedule(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  const { userId } = req;
+  const activityId = Number(req.params.id);
+
+  try {
+    await activitiesService.deleteSchedule(userId, activityId);
+    return res.sendStatus(httpStatus.OK);
+  } catch (e) {
     next(e);
   }
 }
