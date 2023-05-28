@@ -6,7 +6,7 @@ import ticketsRepository from '@/repositories/tickets-repository';
 import enrollmentRepository from '@/repositories/enrollment-repository';
 import { cannotFindEnrollmenteError } from '@/errors/cannot-find-enrollment-error';
 import { notPaidYetError } from '@/errors/not-paid-yet-error';
-import { notFoundError } from '@/errors';
+import { conflictError, notFoundError } from '@/errors';
 import { isRemoteTicketError } from '@/errors/is-remote-ticket-error';
 
 dayjs.extend(customParseFormat);
@@ -41,23 +41,28 @@ async function getActivities(userId: number): Promise<Activity[]> {
   return activities;
 }
 
-async function scheduleActivity(userId: number, activityId: number) {
+async function scheduleActivity(userId: number, activityId: number, startsAt: string) {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
   if (!enrollment) {
-    console.log('aqui1')
     throw cannotFindEnrollmenteError();
   }
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
 
   if (!ticket || ticket.status === 'RESERVED') {
-    console.log('aqui2')
     throw notPaidYetError();
   }
   if (ticket.TicketType.isRemote) {
-    console.log('aqui3')
     throw isRemoteTicketError();
   }
-  await activitiesRepository.createSchedule(userId, activityId);
+
+  const checkDateConflict = await activitiesRepository.getSchedulesByUserId(userId);
+  checkDateConflict.map(schedule => {
+    if(schedule.startsAt === startsAt){
+      throw conflictError('Conflito de horário de atividades');
+    }
+  });
+
+  await activitiesRepository.createSchedule(userId, activityId, startsAt);
 }
 
 async function deleteSchedule(userId: number, activityId: number) {

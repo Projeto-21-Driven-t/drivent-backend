@@ -152,6 +152,7 @@ model Schedule {
   activityId Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime
+  startsAt   String   @db.VarChar(30)
 }
 
 enum TicketStatus {

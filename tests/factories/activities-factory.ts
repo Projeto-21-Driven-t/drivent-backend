@@ -13,11 +13,12 @@ export async function createActivity() {
   });
 }
 
-export async function scheduleActivity(userId: number, activityId: number) {
+export async function scheduleActivity(userId: number, activityId: number, startsAt: string) {
     return await prisma.schedule.create({
         data: {
         userId,
         activityId,
+        startsAt,
         updatedAt: new Date(),
         }
     });
