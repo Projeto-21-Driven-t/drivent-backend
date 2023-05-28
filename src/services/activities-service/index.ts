@@ -41,7 +41,37 @@ async function getActivities(userId: number): Promise<Activity[]> {
   return activities;
 }
 
-const activitiesService = { getActivities };
+async function scheduleActivity(userId: number, activityId: number) {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) {
+    console.log('aqui1')
+    throw cannotFindEnrollmenteError();
+  }
+  const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
+
+  if (!ticket || ticket.status === 'RESERVED') {
+    console.log('aqui2')
+    throw notPaidYetError();
+  }
+  if (ticket.TicketType.isRemote) {
+    console.log('aqui3')
+    throw isRemoteTicketError();
+  }
+  await activitiesRepository.createSchedule(userId, activityId);
+}
+
+async function deleteSchedule(userId: number, activityId: number) {
+  const activity = await activitiesRepository.getScheduleByIds(userId, activityId);
+  if(!activity) throw notFoundError();
+
+  await activitiesRepository.deleteSchedule(userId, activityId);
+}
+
+const activitiesService = { 
+  getActivities,
+  scheduleActivity,
+  deleteSchedule
+};
 
 type formatedActivitiesType = {
   principal: Activity[];

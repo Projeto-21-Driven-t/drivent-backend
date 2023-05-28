@@ -146,6 +146,14 @@ model Activity {
   createdAt DateTime @default(now())
 }
 
+model Schedule {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  activityId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+}
+
 enum TicketStatus {
   RESERVED
   PAID
