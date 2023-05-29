@@ -1,12 +1,13 @@
 import supertest from 'supertest';
-import { cleanDb, generateValidToken } from '../helpers';
 import { TicketStatus } from '@prisma/client';
-import { 
-  createEvent, 
+import { cleanDb, generateValidToken } from '../helpers';
+import {
+  createEvent,
   createEnrollmentWithAddress,
   createUser,
   createTicketTypeWithHotel,
-  createTicket} from '../factories';
+  createTicket,
+} from '../factories';
 import { createActivity, scheduleActivity } from '../factories/activities-factory';
 import app, { init } from '@/app';
 
@@ -41,7 +42,7 @@ describe('POST /activities', () => {
       const response = await server
         .post('/activities')
         .set('Authorization', `Bearer ${token}`)
-        .send({ activityId: activity.id, startsAt: '31/05/23 09:00'});
+        .send({ activityId: activity.id, startsAt: '31/05/23 09:00' });
 
       expect(response.status).toBe(201);
     });
@@ -57,13 +58,12 @@ describe('POST /activities', () => {
       await scheduleActivity(user.id, activity.id, '30/05/23 09:00');
 
       const response = await server
-      .post('/activities')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ activityId: activity.id, startsAt: '30/05/23 09:00'});
+        .post('/activities')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ activityId: activity.id, startsAt: '30/05/23 09:00' });
 
       expect(response.status).toBe(409);
     });
-
   });
 });
 

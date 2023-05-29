@@ -5,6 +5,10 @@ import { deleteSchedule, getActivities, scheduleActivity } from '@/controllers/a
 
 const activitiesRouter = Router();
 
-activitiesRouter.all('/*', authenticateToken).get('/', getActivities).post('/', validateBody(activitiesSchema), scheduleActivity).delete('/:id', deleteSchedule);
+activitiesRouter
+  .all('/*', authenticateToken)
+  .get('/', getActivities)
+  .post('/', validateBody(activitiesSchema), scheduleActivity)
+  .delete('/:id', deleteSchedule);
 
 export { activitiesRouter };
