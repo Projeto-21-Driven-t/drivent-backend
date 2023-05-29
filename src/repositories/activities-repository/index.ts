@@ -1,5 +1,5 @@
-import { prisma } from '@/config';
 import { Prisma } from '@prisma/client';
+import { prisma } from '@/config';
 
 function findManyActivities() {
   return prisma.activity.findMany({
@@ -11,20 +11,28 @@ function findManyActivities() {
   });
 }
 
-function getScheduleByIds(userId: number, activityId: number){
+function findUserSchedules(userId: number) {
+  return prisma.schedule.findMany({
+    where: {
+      userId,
+    },
+  });
+}
+
+function getScheduleByIds(userId: number, activityId: number) {
   return prisma.schedule.findFirst({
     where: {
       userId,
       activityId,
-    }
+    },
   });
 }
 
-function getSchedulesByUserId(userId: number){
+function getSchedulesByUserId(userId: number) {
   return prisma.schedule.findMany({
     where: {
       userId,
-    }
+    },
   });
 }
 
@@ -41,7 +49,7 @@ async function createSchedule(userId: number, activityId: number, startsAt: stri
     where: {
       id: activityId,
     },
-    data: {capacity: {decrement: 1}},
+    data: { capacity: { decrement: 1 } },
   });
 }
 
@@ -56,16 +64,17 @@ async function deleteSchedule(userId: number, activityId: number) {
     where: {
       id: activityId,
     },
-    data: {capacity: {increment: 1}},
+    data: { capacity: { increment: 1 } },
   });
 }
 
 const activitiesRepository = {
   findManyActivities,
-  createSchedule, 
+  createSchedule,
   deleteSchedule,
   getScheduleByIds,
   getSchedulesByUserId,
+  findUserSchedules,
 };
 
 export default activitiesRepository;

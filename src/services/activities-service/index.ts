@@ -21,14 +21,17 @@ async function getActivities(userId: number): Promise<Activity[]> {
   if (!ticket || ticket.status === 'RESERVED') {
     throw notPaidYetError();
   }
-  console.log(ticket);
 
   if (ticket.TicketType.isRemote) {
     throw isRemoteTicketError();
   }
   const activities = await activitiesRepository.findManyActivities();
+  const scheduledActivities = await activitiesRepository.findUserSchedules(userId);
   if (activities.length === 0) throw notFoundError();
-  return activities;
+  return activities.map((a) => {
+    if (scheduledActivities.find((sa) => sa.activityId === a.id)) return { ...a, ingressed: true };
+    return { ...a, ingressed: false };
+  });
 }
 
 async function scheduleActivity(userId: number, activityId: number, startsAt: string) {
@@ -46,8 +49,8 @@ async function scheduleActivity(userId: number, activityId: number, startsAt: st
   }
 
   const checkDateConflict = await activitiesRepository.getSchedulesByUserId(userId);
-  checkDateConflict.map(schedule => {
-    if(schedule.startsAt === startsAt){
+  checkDateConflict.map((schedule) => {
+    if (schedule.startsAt === startsAt) {
       throw conflictError('Conflito de horário de atividades');
     }
   });
@@ -57,21 +60,15 @@ async function scheduleActivity(userId: number, activityId: number, startsAt: st
 
 async function deleteSchedule(userId: number, activityId: number) {
   const activity = await activitiesRepository.getScheduleByIds(userId, activityId);
-  if(!activity) throw notFoundError();
+  if (!activity) throw notFoundError();
 
   await activitiesRepository.deleteSchedule(userId, activityId);
 }
 
-const activitiesService = { 
+const activitiesService = {
   getActivities,
   scheduleActivity,
-  deleteSchedule
-};
-
-type formatedActivitiesType = {
-  principal: Activity[];
-  lateral: Activity[];
-  workshop: Activity[];
+  deleteSchedule,
 };
 
 export default activitiesService;
